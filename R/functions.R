@@ -41,19 +41,22 @@ read_file_data <- function(zip,filename) {
   )
 }
 
-# load data for specified pollutant, for a specific sector and year
-read_pollution_data <- function(year,pollutant,sector) {
-  read_file_data(
-    zip_file(year,pollutant),
-    data_file(year,pollutant,sector)
-  )
+# Load data for specified pollutant, for a specific sector and year
+# If parameters are missing, the whole series will be loaded as a default
+read_pollution_data <- function(year=years,pollutant=pollutants,sector=names(sectors)) {
+    bind_rows(map(year,function(y) {
+      bind_rows(map(pollutant, function(p) {
+        bind_rows(map(sector,function(s) {
+          read_file_data(
+            zip_file(y,p),
+            data_file(y,p,s)
+          )
+        }))
+      }))
+    }))
 }
 
-# reads data for all years (2000-2016) for a specific pollutant and sector
-read_all_pollution_data <- function(pollutant,sector) {
-  years %>%
-    map(function(year) read_pollution_data(year,pollutant,sector))
-}
+
 
 # DISPLAY FUNCTIONS:
 
@@ -62,7 +65,7 @@ read_all_pollution_data <- function(pollutant,sector) {
 # Example country_filter:
 # country_filter <- function(tbl) filter(tbl,iso2=="BE"|iso2=="NL"|iso2=="DE"|iso2=="GB")
 pollution_trend <- function(sector,pollutant,country_filter=function(tbl) return(tbl)) {
-  pollution_totals <- read_all_pollution_data(pollutant,sector) %>%
+  pollution_totals <- read_pollution_data(pollutant,sector) %>%
     bind_rows %>%
     country_filter %>%
     group_by(iso2,year) %>%

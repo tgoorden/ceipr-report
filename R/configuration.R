@@ -7,6 +7,7 @@ data_directory <- 'webdab1.umweltbundesamt.at/download/gridding2018/'
 years <- c(2000:2016)
 sectors <- c("Public Power","Industry","Other Stationary Comb","Fugitive","Solvents","Road Transport","Shipping","Aviation","Offroad","Waste")
 names(sectors) <- c("A","B","C","D","E","F","G","H","I","J")
+pollutants <- c("CO","NOx","NMVOC","PM2_5","PM10","PMcoarse")
 csv_column_names <- c("iso2", "year", "sector",
                       "pollutant", "longitude",
                       "latitude", "unit", "emission")

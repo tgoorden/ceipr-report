@@ -16,3 +16,8 @@ neighbour_filter <- function(tbl) filter(tbl,iso2=="BE"|iso2=="NL"|iso2=="DE"|is
 pollution_trend_all_sectors('CO',neighbour_filter)
 ```
 
+```{r}
+dat <- read_pollution_data(year = 2016,pollutant = 'NOx',sector = 'H')
+```
+
+
