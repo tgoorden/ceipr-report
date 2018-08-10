@@ -1,0 +1,18 @@
+---
+title: "Example report for PM2.5"
+output: html_notebook
+---
+```{r}
+source('R/configuration.R')
+source('R/functions.R')
+```
+
+__Hint__
+The configuration assumes that ceipr data is present at 'webdab1.umweltbundesamt.at/download/gridding2018/' relative to this file. If you have downloaded it elsewhere, simply override this variable.
+
+
+```{r}
+neighbour_filter <- function(tbl) filter(tbl,iso2=="BE"|iso2=="NL"|iso2=="DE"|iso2=="GB"|iso2=="FR")
+pollution_trend_all_sectors('CO',neighbour_filter)
+```
+
