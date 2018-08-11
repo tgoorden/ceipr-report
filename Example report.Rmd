@@ -7,6 +7,7 @@ output: html_notebook
 source('R/configuration.R')
 source('R/load_functions.R')
 source('R/render_functions.R')
+source('R/population_functions.R')
 ```
 
 __Hint__
@@ -72,3 +73,21 @@ pollution_data <- read_pollution_data(pollutant=name_pollutant,sector=name_secto
 view_comparisons(filter(pollution_data,iso2 %in% euro_zone))
 ```
 
+# Example 4: Rank countries by pollution per person
+
+```{r}
+# Read the data for CO in sector "F" (road transport), all years will be loaded:
+name_pollutant <- 'NOx'
+name_sector <- 'F'
+selected_year <- 2016
+pollution_data <- read_pollution_data(pollutant=name_pollutant,sector=name_sector,year=selected_year)
+pollution_data <- filter(pollution_data,iso2 %in% euro_zone)
+pollution_totals <- dplyr::group_by(pollution_data,iso2,year) %>%
+    dplyr::summarise(total = sum(emission))
+pollution_totals <- add_population(pollution_totals)
+pollution_totals$emission_per_person <- with(pollution_totals,1000*total/population)
+# Since the data will contain a lot of countries, we subselect Eurozone countries.
+# view_comparisons(filter(pollution_data,iso2 %in% euro_zone))
+ggplot(pollution_totals,aes(x=reorder(iso2,-emission_per_person),y=emission_per_person,fill=iso2)) +
+   geom_bar(stat="identity",position="dodge")
+```
