@@ -2,9 +2,11 @@
 title: "Example report for PM2.5"
 output: html_notebook
 ---
+
 ```{r}
 source('R/configuration.R')
-source('R/functions.R')
+source('R/load_functions.R')
+source('R/render_functions.R')
 ```
 
 __Hint__
@@ -16,8 +18,57 @@ neighbour_filter <- function(tbl) filter(tbl,iso2=="BE"|iso2=="NL"|iso2=="DE"|is
 pollution_trend_all_sectors('CO',neighbour_filter)
 ```
 
+## Sectors
+These emission sectors are available:
+
 ```{r}
-dat <- read_pollution_data(year = 2016,pollutant = 'NOx',sector = 'H')
+# This d
+knitr::kable(sectors,title="Sectors")
 ```
 
+Here's a helpful map of EU countries as well:
+
+![](https://upload.wikimedia.org/wikipedia/commons/8/86/Europe_ISO_3166-1.svg)
+
+
+# Example 1: Pollution trend per country
+
+This loads the data for a specific pollutant and sector. As every zipfile contains data from _all_ EU countries, this would be the (only) logical variable to group by. Since we don't specify a year, all years will be loaded.
+
+```{r}
+# Read the data for CO in sector "H" (aviation), all years will be loaded:
+NOx_pollutant <- 'NOx'
+H_sector <- 'F'
+NOx_data <- read_pollution_data(pollutant=NOx_pollutant,sector=H_sector)
+# Define a filter to select countries of interes:
+belgian_neighbours_filter <- function(tbl) filter(tbl,iso2=="BE"|iso2=="NL"|iso2=="DE"|iso2=="GB"|iso2=="FR")
+view_trends(belgian_neighbours_filter(NOx_data),subject=paste(NOx_pollutant,sectors[H_sector]))
+```
+
+# Example 2: Pollution trends per sector for one country
+
+This loads the data for a specific pollutant for all sectors. As every zipfile contains data from _all_ EU countries, we'll need to narrow down to one specific country.
+
+```{r}
+# Read the data for NOx for all sectors and all years:
+pollutant_name <- 'NOx'
+pollution_data <- read_pollution_data(pollutant = pollutant_name)
+# Define a filter to select countries of interes:
+belgian_filter <- function(tbl) filter(tbl,iso2=="BE")
+view_trends(belgian_filter(pollution_data),group="sector",group_label = "Belgian sector",subject = pollutant_name)
+```
+
+# Example 3: Comparison of totals per country in a year
+
+This loads the data for a specific pollutant and sector. As every zipfile contains data from _all_ EU countries, this would be the (only) logical variable to group by. Since we're only comparing the totals for one year, we can view all countries.
+
+```{r}
+# Read the data for CO in sector "H" (aviation), all years will be loaded:
+name_pollutant <- 'NOx'
+name_sector <- 'F'
+selected_year <- 2016
+pollution_data <- read_pollution_data(pollutant=name_pollutant,sector=name_sector,year=selected_year)
+# Since the data will contain a lot of countries, we subselect Eurozone countries.
+view_comparisons(filter(pollution_data,iso2 %in% euro_zone))
+```
 

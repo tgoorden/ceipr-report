@@ -8,6 +8,7 @@ years <- c(2000:2016)
 sectors <- c("Public Power","Industry","Other Stationary Comb","Fugitive","Solvents","Road Transport","Shipping","Aviation","Offroad","Waste")
 names(sectors) <- c("A","B","C","D","E","F","G","H","I","J")
 pollutants <- c("CO","NOx","NMVOC","PM2_5","PM10","PMcoarse")
+euro_zone <- c("AT","BE","CY","EE","FI","FR","DE","GR","IE","IT","LT","LV","LU","NL","PT","SK","SI","ES")
 csv_column_names <- c("iso2", "year", "sector",
                       "pollutant", "longitude",
                       "latitude", "unit", "emission")
@@ -21,6 +22,7 @@ csv_col_types <- cols(
   unit = col_character(),
   emission = col_double()
 )
+
 csv_delim <- ';'
 csv_comment <- '#'
 csv_locale <- locale(decimal_mark = '.',grouping_mark = ',')
